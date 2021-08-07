@@ -38,27 +38,8 @@ public class BlackBE extends PluginBase implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent playerJoinEvent) {
         Player player = playerJoinEvent.getPlayer();
-        try {
-            URL url = new URL(api_domain + "/check?v2=true&id=" + player.getName());
+        this.getServer().getScheduler().scheduleAsyncTask(this,new QueryTask(this,player));
 
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setConnectTimeout(5000);
-            httpURLConnection.setReadTimeout(5000);
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-            String inputLine;
-
-            while ((inputLine = bufferedReader.readLine()) != null) {
-                Gson gson = new Gson();
-                Api api = gson.fromJson(inputLine, Api.class);
-                if (api.getErrorCode().equals("2002")) {
-                    this.getServer().getScheduler().scheduleDelayedTask(this, new KickRunnable(this, player), 10);
-                }
-            }
-            bufferedReader.close();
-            httpURLConnection.disconnect();
-        } catch (IOException e) {
-            this.getLogger().error("云黑可能炸了哦");
-        }
     }
 
     @Override
