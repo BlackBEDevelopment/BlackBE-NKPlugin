@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 
 public class QueryTask extends AsyncTask {
 
@@ -22,7 +23,8 @@ public class QueryTask extends AsyncTask {
     @Override
     public void onRun() {
         try {
-            URL url = new URL(BlackBE.api_domain + "/check?v2=true&id=" + player.getName());
+
+            URL url = new URL(URLEncoder.encode(BlackBE.api_domain + "/check?v2=true&id=" + player.getName(),"UTF-8"));
 
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setConnectTimeout(5000);
