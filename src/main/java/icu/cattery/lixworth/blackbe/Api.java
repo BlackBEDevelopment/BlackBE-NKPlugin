@@ -4,7 +4,7 @@ public class Api {
     private String success;
     private String message;
     private String error;
-    private Data data;
+//    private Data data;
     private String version;
 
     public String getErrorCode() {

@@ -5,7 +5,6 @@ import cn.nukkit.scheduler.AsyncTask;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -20,11 +19,12 @@ public class QueryTask extends AsyncTask {
         this.blackBE = blackBE;
         this.player = player;
     }
+
     @Override
     public void onRun() {
         try {
 
-            URL url = new URL(URLEncoder.encode(BlackBE.api_domain + "/check?v2=true&id=" + player.getName(),"UTF-8"));
+            URL url = new URL(BlackBE.api_domain + "/check?v2=true&id=" + URLEncoder.encode(player.getName(),"UTF-8"));
 
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setConnectTimeout(5000);
@@ -43,8 +43,9 @@ public class QueryTask extends AsyncTask {
             }
             bufferedReader.close();
             httpURLConnection.disconnect();
-        } catch (Exception e) {
-            this.blackBE.getLogger().error("云黑可能炸了哦");
+            // IOException MalformedURLException UnsupportedEncodingException
+        } catch (Exception exception) {
+            this.blackBE.getLogger().error("云黑插件出现错误 请稍后重试"+exception.getMessage());
         }
     }
 }

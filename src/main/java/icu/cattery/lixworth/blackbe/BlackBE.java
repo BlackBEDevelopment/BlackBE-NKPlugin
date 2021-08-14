@@ -39,7 +39,6 @@ public class BlackBE extends PluginBase implements Listener {
     public void onPlayerJoin(PlayerJoinEvent playerJoinEvent) {
         Player player = playerJoinEvent.getPlayer();
         this.getServer().getScheduler().scheduleAsyncTask(this,new QueryTask(this,player));
-
     }
 
     @Override
