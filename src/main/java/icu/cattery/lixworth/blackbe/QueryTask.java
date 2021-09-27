@@ -23,12 +23,15 @@ public class QueryTask extends AsyncTask {
     @Override
     public void onRun() {
         try {
-
             URL url = new URL(BlackBE.api_domain + "/check?v2=true&id=" + URLEncoder.encode(player.getName(),"UTF-8"));
 
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.setRequestMethod("GET");
+            httpURLConnection.setRequestProperty("User-Agent", "RuMao/1.2");
             httpURLConnection.setConnectTimeout(5000);
             httpURLConnection.setReadTimeout(5000);
+            httpURLConnection.connect();
+
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
             String inputLine;
 
