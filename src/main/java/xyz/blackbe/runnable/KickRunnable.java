@@ -1,13 +1,14 @@
-package icu.cattery.lixworth.blackbe;
+package xyz.blackbe.runnable;
 
 import cn.nukkit.Player;
+import xyz.blackbe.BlackBEMain;
 
-public class KickRunnable implements Runnable {
-    public BlackBE that;
+public class KickRunnable implements BlackBERunnable {
+    public BlackBEMain that;
     public Player player;
 
-    public KickRunnable(BlackBE blackBE, Player that_player) {
-        that = blackBE;
+    public KickRunnable(BlackBEMain blackBEMain, Player that_player) {
+        that = blackBEMain;
         player = that_player;
     }
 
