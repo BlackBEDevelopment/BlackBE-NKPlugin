@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>icu.cattery.lixworth.blackbe</groupId>
+    <groupId>xyz.blackbe</groupId>
     <artifactId>BlackBE</artifactId>
-    <version>1.2-RM-RELEASE</version>
+    <version>1.3.0</version>
     <description>BlackBE Plugin blackbe.xyz</description>
     <url>https://github.com/lixworth/BlackBE-NKPlugin</url>
 

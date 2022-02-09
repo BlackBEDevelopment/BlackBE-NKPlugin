@@ -1,13 +1,11 @@
 package xyz.blackbe.data;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 @SuppressWarnings({"unused", "MismatchedQueryAndUpdateOfCollection"})
-public class BlackBECheckBean {
+public class BlackBECheckData extends BlackBEData {
     private boolean success;
     private Integer status;
     private String message;
@@ -16,8 +14,6 @@ public class BlackBECheckBean {
     private Long time;
     @SerializedName("data")
     private Data checkData;
-
-    private static final Gson FOR_DISPLAY_GSON_INSTANCE = new GsonBuilder().setPrettyPrinting().create();
 
     public boolean getSuccess() {
         return success;
@@ -47,23 +43,18 @@ public class BlackBECheckBean {
         return checkData;
     }
 
-    public String toQueryResult() {
-        return FOR_DISPLAY_GSON_INSTANCE.toJson(this);
-    }
-
     @Override
     public String toString() {
         return "BlackBECheckBean{" +
-                "success='" + success + '\'' +
+                "success=" + success +
                 ", status=" + status +
                 ", message='" + message + '\'' +
                 ", version='" + version + '\'' +
                 ", codename='" + codename + '\'' +
-                ", time='" + time + '\'' +
+                ", time=" + time +
                 ", checkData=" + (checkData != null ? checkData.toString() : null) +
                 '}';
     }
-
 
     public static class Data {
         private boolean exist;

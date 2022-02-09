@@ -7,7 +7,7 @@ authors: ["LixWorth", "darker"]
 description: BlackBE NK Plugin blacbe.xyz
 website: https://github.com/lixworth/BlackBE-NKPlugin
 
-permission:
+permissions:
   blackbe.command.default:
     description: BlackBE 云黑插件权限
     default: op

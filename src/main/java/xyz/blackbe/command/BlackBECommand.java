@@ -9,6 +9,9 @@ import cn.nukkit.utils.TextFormat;
 import xyz.blackbe.BlackBEMain;
 import xyz.blackbe.constant.BlackBEApiConstants;
 import xyz.blackbe.runnable.CheckBlacklistByNameTask;
+import xyz.blackbe.runnable.QueryBEServerStatusTask;
+import xyz.blackbe.runnable.QueryJEServerStatusTask;
+import xyz.blackbe.runnable.QueryXUIDTask;
 
 public class BlackBECommand extends Command {
     public BlackBECommand() {
@@ -17,7 +20,8 @@ public class BlackBECommand extends Command {
         this.commandParameters.clear();
         this.commandParameters.put("check", new CommandParameter[]{
                 CommandParameter.newEnum("check", new String[]{"check"}),
-                CommandParameter.newType("player", CommandParamType.TARGET)
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newType("xuid", true, CommandParamType.STRING)
         });
         this.commandParameters.put("xuid", new CommandParameter[]{
                 CommandParameter.newEnum("xuid", new String[]{"xuid"}),
@@ -58,12 +62,31 @@ public class BlackBECommand extends Command {
                         break;
                     }
                     case "xuid": {
+                        String gamertag = args[1].replace("&", " ");
+                        QueryXUIDTask task = new QueryXUIDTask(gamertag, sender);
+                        Server.getInstance().getScheduler().scheduleAsyncTask(BlackBEMain.getInstance(), task);
                         break;
                     }
                     case "motdpe": {
+                        String host = args[1];
+                        QueryBEServerStatusTask task;
+                        if (args.length > 2) {
+                            task = new QueryBEServerStatusTask(host, Integer.parseInt(args[2]), sender);
+                        } else {
+                            task = new QueryBEServerStatusTask(host, sender);
+                        }
+                        Server.getInstance().getScheduler().scheduleAsyncTask(BlackBEMain.getInstance(), task);
                         break;
                     }
                     case "motdpc": {
+                        String host = args[1];
+                        QueryJEServerStatusTask task;
+                        if (args.length > 2) {
+                            task = new QueryJEServerStatusTask(host, Integer.parseInt(args[2]), sender);
+                        } else {
+                            task = new QueryJEServerStatusTask(host, sender);
+                        }
+                        Server.getInstance().getScheduler().scheduleAsyncTask(BlackBEMain.getInstance(), task);
                         break;
                     }
                     case "help":
@@ -78,7 +101,7 @@ public class BlackBECommand extends Command {
 
     public void sendHelpInfo(CommandSender sender) {
         sender.sendMessage(TextFormat.GREEN + "云黑插件命令:");
-        sender.sendMessage(TextFormat.GREEN + "/blackbe check <name> | 查询某玩家是否在云黑名单中(可以使用&号代替空格)");
+        sender.sendMessage(TextFormat.GREEN + "/blackbe check <name> [xuid] | 查询某玩家是否在云黑名单中(可以使用&号代替空格)");
         sender.sendMessage(TextFormat.GREEN + "/blackbe xuid <gamertag> | 通过Xbox玩家代号查询XUID(可以使用&号代替空格)");
         sender.sendMessage(TextFormat.GREEN + "/blackbe motdpe <host> [port=19132] | 获取BE版服务器状态");
         sender.sendMessage(TextFormat.GREEN + "/blackbe motdpc <host> [port=19132] | 获取JE版服务器状态");

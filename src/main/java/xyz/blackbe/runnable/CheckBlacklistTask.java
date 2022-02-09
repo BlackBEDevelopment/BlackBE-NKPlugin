@@ -1,30 +1,31 @@
 package xyz.blackbe.runnable;
 
 import cn.nukkit.Player;
-import cn.nukkit.event.player.PlayerKickEvent;
+import cn.nukkit.Server;
 import cn.nukkit.scheduler.AsyncTask;
 import com.google.gson.Gson;
 import xyz.blackbe.BlackBEMain;
 import xyz.blackbe.constant.BlackBEApiConstants;
-import xyz.blackbe.data.BlackBECheckBean;
+import xyz.blackbe.data.BlackBECheckData;
+import xyz.blackbe.event.BlackBEKickEvent;
+import xyz.blackbe.util.BlackBEUtils;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static xyz.blackbe.constant.BlackBEApiConstants.BLACKBE_API_ADDRESS;
+import static xyz.blackbe.constant.BlackBEApiConstants.BLACKBE_API_HOST;
 
 @SuppressWarnings({"DuplicatedCode", "unused"})
 public class CheckBlacklistTask extends AsyncTask {
     private static final Gson GSON = new Gson();
     private final Player player;
-    private BlackBECheckBean checkBean;
+    private BlackBECheckData data;
     private boolean checkSuccess = false;
 
     public CheckBlacklistTask(Player player) {
@@ -36,20 +37,11 @@ public class CheckBlacklistTask extends AsyncTask {
         BufferedReader bufferedReader = null;
         HttpsURLConnection httpsURLConnection = null;
         try {
-            URL url = new URL(String.format(BLACKBE_API_ADDRESS + "check?name=%s&xuid=%s", URLEncoder.encode(player.getName(), StandardCharsets.UTF_8.name()), player.getLoginChainData().getXUID()));
-            System.out.println(url.toString());
-            httpsURLConnection = (HttpsURLConnection) url.openConnection();
-            httpsURLConnection.setRequestMethod("GET");
-            httpsURLConnection.setRequestProperty("Accept-language", "zh-CN,zh;q=0.9");
-            httpsURLConnection.setRequestProperty("Cache-control", "max-age=0");
-            httpsURLConnection.setRequestProperty("Content-type", "application/json; charset=utf-8");
-            httpsURLConnection.setRequestProperty("User-Agent", "Mozilla/5.0");
-
-            httpsURLConnection.setConnectTimeout(5000);
-            httpsURLConnection.setReadTimeout(5000);
+            URL url = new URL(String.format(BLACKBE_API_HOST + "check?name=%s&xuid=%s", URLEncoder.encode(player.getName(), StandardCharsets.UTF_8.name()), player.getLoginChainData().getXUID()));
+            httpsURLConnection = BlackBEUtils.initHttpsURLConnection(url, 5000, 5000);
             httpsURLConnection.connect();
 
-            if (httpsURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            if (httpsURLConnection.getResponseCode() == HttpsURLConnection.HTTP_OK) {
 
                 bufferedReader = new BufferedReader(new InputStreamReader(httpsURLConnection.getInputStream()));
                 String inputLine;
@@ -57,23 +49,28 @@ public class CheckBlacklistTask extends AsyncTask {
                 while ((inputLine = bufferedReader.readLine()) != null) {
                     sb.append(inputLine);
                 }
-                System.out.println(sb);
-                this.checkBean = GSON.fromJson(sb.toString(), BlackBECheckBean.class);
-                System.out.println(checkBean);
+
+                this.data = GSON.fromJson(sb.toString(), BlackBECheckData.class);
                 this.checkSuccess = true;
 
-                switch (this.checkBean.getStatus()) {
+                switch (this.data.getStatus()) {
                     case BlackBEApiConstants.CHECK_STATUS_IN_BLACKLIST: {
                         StringBuilder reasonStringBuilder = new StringBuilder("查询到您处在云黑名单中,以阻止您游玩本服务器.您的条目信息:\n");
-                        if (this.checkBean.getCheckData() != null) {
-                            List<BlackBECheckBean.Data.InfoBean> infoList = this.checkBean.getCheckData().getInfo();
-                            for (BlackBECheckBean.Data.InfoBean infoBean : infoList) {
+                        if (this.data.getCheckData() != null) {
+                            List<BlackBECheckData.Data.InfoBean> infoList = this.data.getCheckData().getInfo();
+                            for (BlackBECheckData.Data.InfoBean infoBean : infoList) {
                                 reasonStringBuilder.append("    违规等级:").append(infoBean.getLevel());
                                 reasonStringBuilder.append(",违规信息:").append(infoBean.getInfo());
+                                reasonStringBuilder.append(",name:").append(infoBean.getName());
+                                reasonStringBuilder.append(",black_id:").append(infoBean.getBlackId());
                                 reasonStringBuilder.append("\n");
                             }
                         }
-                        player.kick(PlayerKickEvent.Reason.KICKED_BY_ADMIN, reasonStringBuilder.toString(), true);
+                        BlackBEKickEvent blackBEKickEvent = new BlackBEKickEvent(player, BlackBEKickEvent.Reason.IN_BLACKLIST, true);
+                        Server.getInstance().getPluginManager().callEvent(blackBEKickEvent);
+                        if (!blackBEKickEvent.isCancelled() && blackBEKickEvent.isAutoKick()) {
+                            BlackBEUtils.kickPlayer(player, reasonStringBuilder.toString(), "黑名单中玩家进服");
+                        }
                         break;
                     }
                     case BlackBEApiConstants.CHECK_STATUS_NOT_IN_BLACKLIST: {
@@ -81,23 +78,45 @@ public class CheckBlacklistTask extends AsyncTask {
                         break;
                     }
                     case BlackBEApiConstants.CHECK_STATUS_LACK_PARAM: {
-                        player.kick(PlayerKickEvent.Reason.KICKED_BY_ADMIN, "云黑插件查询Api缺少查询参数,请联系管理员以寻求更多信息.URL=" + url.toExternalForm(), true);
+                        BlackBEKickEvent blackBEKickEvent = new BlackBEKickEvent(player, BlackBEKickEvent.Reason.LACK_PARAM, true);
+                        Server.getInstance().getPluginManager().callEvent(blackBEKickEvent);
+                        if (!blackBEKickEvent.isCancelled() && blackBEKickEvent.isAutoKick()) {
+                            BlackBEUtils.kickPlayer(player, "云黑插件查询Api缺少查询参数,请联系管理员以寻求更多信息.URL=" + url.toExternalForm(), "云黑插件查询Api缺少查询参数");
+                        }
                         break;
                     }
                     case BlackBEApiConstants.CHECK_STATUS_SERVER_ERROR: {
-                        player.kick(PlayerKickEvent.Reason.KICKED_BY_ADMIN, "云黑平台出现内部错误,请联系云黑平台工作人员.", true);
+                        BlackBEKickEvent blackBEKickEvent = new BlackBEKickEvent(player, BlackBEKickEvent.Reason.SERVER_ERROR, true);
+                        Server.getInstance().getPluginManager().callEvent(blackBEKickEvent);
+                        if (!blackBEKickEvent.isCancelled() && blackBEKickEvent.isAutoKick()) {
+                            BlackBEUtils.kickPlayer(player, "云黑平台出现内部错误,请联系云黑平台工作人员.", "云黑平台出现内部错误");
+                        }
                         break;
                     }
                     default: {
-                        BlackBEMain.getInstance().getLogger().notice("在查询时出现了未知状态码:" + this.checkBean.getStatus());
+                        BlackBEMain.getInstance().getLogger().notice("在查询时出现了未知状态码:" + this.data.getStatus());
+                        BlackBEKickEvent blackBEKickEvent = new BlackBEKickEvent(player, BlackBEKickEvent.Reason.UNKNOWN_STATUS, true);
+                        Server.getInstance().getPluginManager().callEvent(blackBEKickEvent);
+                        if (!blackBEKickEvent.isCancelled() && blackBEKickEvent.isAutoKick()) {
+                            BlackBEUtils.kickPlayer(player, "云黑平台出现内部错误,请联系云黑平台工作人员.", "未知状态码" + this.data.getStatus());
+                        }
                     }
                 }
             } else {
                 BlackBEMain.getInstance().getLogger().error("在连接至云黑查询平台时出现问题,状态码=" + httpsURLConnection.getResponseCode() + ",请求URL=" + url.toExternalForm());
-                player.kick(PlayerKickEvent.Reason.KICKED_BY_ADMIN, "云黑平台验证失败,请联系管理员以寻求更多帮助.", true);
+                BlackBEKickEvent blackBEKickEvent = new BlackBEKickEvent(player, BlackBEKickEvent.Reason.URL_CONNECTION_ERROR, true);
+                Server.getInstance().getPluginManager().callEvent(blackBEKickEvent);
+                if (!blackBEKickEvent.isCancelled() && blackBEKickEvent.isAutoKick()) {
+                    BlackBEUtils.kickPlayer(player, "云黑平台验证失败,请联系管理员以寻求更多帮助.", "云黑平台验证失败");
+                }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
+            BlackBEKickEvent blackBEKickEvent = new BlackBEKickEvent(player, BlackBEKickEvent.Reason.PLUGIN_EXCEPTION, true);
+            Server.getInstance().getPluginManager().callEvent(blackBEKickEvent);
+            if (!blackBEKickEvent.isCancelled() && blackBEKickEvent.isAutoKick()) {
+                BlackBEUtils.kickPlayer(player, "云黑平台验证失败,请联系管理员以寻求更多帮助.", "云黑插件运行时发生异常");
+            }
         } finally {
             try {
                 if (bufferedReader != null) {
@@ -116,8 +135,8 @@ public class CheckBlacklistTask extends AsyncTask {
         return player;
     }
 
-    public BlackBECheckBean getCheckBean() {
-        return checkBean;
+    public BlackBECheckData getData() {
+        return data;
     }
 
     public boolean isCheckSuccess() {
