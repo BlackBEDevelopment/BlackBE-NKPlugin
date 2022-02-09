@@ -37,7 +37,7 @@ public class CheckBlacklistTask implements BlackBETask {
         BufferedReader bufferedReader = null;
         HttpsURLConnection httpsURLConnection = null;
         try {
-            URL url = new URL(String.format(BLACKBE_API_HOST + "check?name=%s&xuid=%s", URLEncoder.encode("blackbetest", StandardCharsets.UTF_8.name()), player.getLoginChainData().getXUID()));
+            URL url = new URL(String.format(BLACKBE_API_HOST + "check?name=%s&xuid=%s", URLEncoder.encode(player.getName(), StandardCharsets.UTF_8.name()), player.getLoginChainData().getXUID()));
             httpsURLConnection = BlackBEUtils.initHttpsURLConnection(url, 5000, 5000);
             httpsURLConnection.connect();
 
