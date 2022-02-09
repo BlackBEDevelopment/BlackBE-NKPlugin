@@ -2,14 +2,13 @@ package xyz.blackbe.blackbeplugin.task;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.scheduler.AsyncTask;
 import com.google.gson.Gson;
-import xyz.blackbe.blackbeplugin.util.BlacklistCacheManager;
 import xyz.blackbe.blackbeplugin.BlackBEMain;
 import xyz.blackbe.blackbeplugin.constant.BlackBEApiConstants;
 import xyz.blackbe.blackbeplugin.data.BlackBEBlacklistCheckData;
 import xyz.blackbe.blackbeplugin.event.BlackBEKickPlayerEvent;
 import xyz.blackbe.blackbeplugin.util.BlackBEUtils;
+import xyz.blackbe.blackbeplugin.util.BlacklistCacheManager;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -23,7 +22,7 @@ import java.util.List;
 import static xyz.blackbe.blackbeplugin.constant.BlackBEApiConstants.BLACKBE_API_HOST;
 
 @SuppressWarnings({"DuplicatedCode", "unused"})
-public class CheckBlacklistTask extends AsyncTask {
+public class CheckBlacklistTask implements BlackBETask {
     private static final Gson GSON = new Gson();
     private final Player player;
     private BlackBEBlacklistCheckData data;
@@ -34,11 +33,11 @@ public class CheckBlacklistTask extends AsyncTask {
     }
 
     @Override
-    public void onRun() {
+    public void invoke() {
         BufferedReader bufferedReader = null;
         HttpsURLConnection httpsURLConnection = null;
         try {
-            URL url = new URL(String.format(BLACKBE_API_HOST + "check?name=%s&xuid=%s", URLEncoder.encode(player.getName(), StandardCharsets.UTF_8.name()), player.getLoginChainData().getXUID()));
+            URL url = new URL(String.format(BLACKBE_API_HOST + "check?name=%s&xuid=%s", URLEncoder.encode("blackbetest", StandardCharsets.UTF_8.name()), player.getLoginChainData().getXUID()));
             httpsURLConnection = BlackBEUtils.initHttpsURLConnection(url, 5000, 5000);
             httpsURLConnection.connect();
 
@@ -53,6 +52,7 @@ public class CheckBlacklistTask extends AsyncTask {
 
                 this.data = GSON.fromJson(sb.toString(), BlackBEBlacklistCheckData.class);
                 this.checkSuccess = true;
+                System.out.println(data);
 
                 switch (this.data.getStatus()) {
                     case BlackBEApiConstants.CHECK_STATUS_IN_BLACKLIST: {
@@ -61,9 +61,12 @@ public class CheckBlacklistTask extends AsyncTask {
                             List<BlackBEBlacklistCheckData.Data.InfoBean> infoList = this.data.getCheckData().getInfo();
                             for (BlackBEBlacklistCheckData.Data.InfoBean infoBean : infoList) {
                                 reasonStringBuilder.append("    违规等级:").append(infoBean.getLevel());
-                                reasonStringBuilder.append(",违规信息:").append(infoBean.getInfo());
                                 reasonStringBuilder.append(",name:").append(infoBean.getName());
                                 reasonStringBuilder.append(",black_id:").append(infoBean.getBlackId());
+                                reasonStringBuilder.append(",QQ:").append(infoBean.getQQ());
+                                reasonStringBuilder.append(",XUID:").append(infoBean.getXUID());
+                                reasonStringBuilder.append(",\n    UUID:").append(infoBean.getUUID());
+                                reasonStringBuilder.append(",\n    违规信息:").append(infoBean.getInfo());
                                 reasonStringBuilder.append("\n");
                             }
                         }

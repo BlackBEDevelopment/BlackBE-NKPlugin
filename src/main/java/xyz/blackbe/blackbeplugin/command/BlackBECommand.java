@@ -1,18 +1,17 @@
 package xyz.blackbe.blackbeplugin.command;
 
-import cn.nukkit.Server;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.utils.TextFormat;
 import xyz.blackbe.blackbeplugin.BlackBEMain;
-import xyz.blackbe.blackbeplugin.util.BlacklistCacheManager;
 import xyz.blackbe.blackbeplugin.constant.BlackBEApiConstants;
 import xyz.blackbe.blackbeplugin.task.CheckBlacklistByNameTask;
 import xyz.blackbe.blackbeplugin.task.QueryBEServerStatusTask;
 import xyz.blackbe.blackbeplugin.task.QueryJEServerStatusTask;
 import xyz.blackbe.blackbeplugin.task.QueryXUIDTask;
+import xyz.blackbe.blackbeplugin.util.BlacklistCacheManager;
 
 public class BlackBECommand extends Command {
     public BlackBECommand() {
@@ -63,13 +62,13 @@ public class BlackBECommand extends Command {
                         } else {
                             task = new CheckBlacklistByNameTask(playerName, sender);
                         }
-                        Server.getInstance().getScheduler().scheduleAsyncTask(BlackBEMain.getInstance(), task);
+                        BlackBEMain.getAsyncTaskWorker().submitTask(task);
                         break;
                     }
                     case "xuid": {
                         String gamertag = args[1].replace("&", " ");
                         QueryXUIDTask task = new QueryXUIDTask(gamertag, sender);
-                        Server.getInstance().getScheduler().scheduleAsyncTask(BlackBEMain.getInstance(), task);
+                        BlackBEMain.getAsyncTaskWorker().submitTask(task);
                         break;
                     }
                     case "motdpe": {
@@ -80,7 +79,7 @@ public class BlackBECommand extends Command {
                         } else {
                             task = new QueryBEServerStatusTask(host, sender);
                         }
-                        Server.getInstance().getScheduler().scheduleAsyncTask(BlackBEMain.getInstance(), task);
+                        BlackBEMain.getAsyncTaskWorker().submitTask(task);
                         break;
                     }
                     case "motdpc": {
@@ -91,7 +90,7 @@ public class BlackBECommand extends Command {
                         } else {
                             task = new QueryJEServerStatusTask(host, sender);
                         }
-                        Server.getInstance().getScheduler().scheduleAsyncTask(BlackBEMain.getInstance(), task);
+                        BlackBEMain.getAsyncTaskWorker().submitTask(task);
                         break;
                     }
                     case "cacheclean":

@@ -35,9 +35,7 @@ public class EventListener implements Listener {
                 BlackBEUtils.kickPlayer(player, reasonStringBuilder.toString(), "黑名单中玩家进服(读取缓存)");
             }
         } else {
-            if (!BlacklistCacheManager.isInWhitelist(player)) {
-                Server.getInstance().getScheduler().scheduleAsyncTask(BlackBEMain.getInstance(), new CheckBlacklistTask(player));
-            }
+            BlackBEMain.getAsyncTaskWorker().submitTask(new CheckBlacklistTask(player));
         }
     }
 }

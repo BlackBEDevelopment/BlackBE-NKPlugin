@@ -19,6 +19,7 @@ public class BlackBEUtils {
         pk.hideDisconnectionScreen = false;
         pk.message = displayMessage;
         player.dataPacket(pk);
+        // nk网络层问题,有时DisconnectPacket还没收到,session就已经断开了
         player.kick(PlayerKickEvent.Reason.KICKED_BY_ADMIN, kickMessage, true);
     }
 

@@ -1,7 +1,6 @@
 package xyz.blackbe.blackbeplugin.task;
 
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.TextFormat;
 import com.google.gson.Gson;
 import xyz.blackbe.blackbeplugin.BlackBEMain;
@@ -18,7 +17,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 @SuppressWarnings({"DuplicatedCode", "unused"})
-public class CheckBlacklistByNameTask extends AsyncTask {
+public class CheckBlacklistByNameTask implements BlackBETask {
     private static final Gson GSON = new Gson();
     private final String playerName;
     private final String xuid;
@@ -39,7 +38,7 @@ public class CheckBlacklistByNameTask extends AsyncTask {
     }
 
     @Override
-    public void onRun() {
+    public void invoke() {
         sender.sendMessage("正在查询中,请稍后......");
         BufferedReader bufferedReader = null;
         HttpsURLConnection httpsURLConnection = null;

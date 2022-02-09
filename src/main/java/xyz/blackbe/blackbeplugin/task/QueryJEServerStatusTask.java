@@ -1,7 +1,6 @@
 package xyz.blackbe.blackbeplugin.task;
 
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.TextFormat;
 import com.google.gson.Gson;
 import xyz.blackbe.blackbeplugin.BlackBEMain;
@@ -19,7 +18,7 @@ import java.nio.charset.StandardCharsets;
 import static xyz.blackbe.blackbeplugin.constant.BlackBEApiConstants.BLACKBE_MOTD_API_HOST;
 
 @SuppressWarnings("unused")
-public class QueryJEServerStatusTask extends AsyncTask {
+public class QueryJEServerStatusTask implements BlackBETask {
     private static final Gson GSON = new Gson();
     private final String host;
     private final int port;
@@ -38,7 +37,7 @@ public class QueryJEServerStatusTask extends AsyncTask {
     }
 
     @Override
-    public void onRun() {
+    public void invoke() {
         sender.sendMessage("正在查询中,请稍后......");
         BufferedReader bufferedReader = null;
         HttpsURLConnection httpsURLConnection = null;
