@@ -1,6 +1,6 @@
-package xyz.blackbe.data;
+package xyz.blackbe.blackbeplugin.data;
 
-public class BlackBEXUIDData extends BlackBEData {
+public class BlackBEXUIDQueryData extends BlackBEData {
     private String success;
     private Integer status;
     private String message;

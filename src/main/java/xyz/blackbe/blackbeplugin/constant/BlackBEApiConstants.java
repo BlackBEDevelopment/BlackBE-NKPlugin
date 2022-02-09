@@ -1,4 +1,4 @@
-package xyz.blackbe.constant;
+package xyz.blackbe.blackbeplugin.constant;
 
 @SuppressWarnings("unused")
 public class BlackBEApiConstants {

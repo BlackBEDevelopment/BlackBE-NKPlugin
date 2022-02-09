@@ -1,5 +1,5 @@
 name: BlackBE
-main: xyz.blackbe.BlackBEMain
+main: xyz.blackbe.blackbeplugin.BlackBEMain
 version: "1.3.0"
 api: ["1.0.0"]
 load: POSTWORLD

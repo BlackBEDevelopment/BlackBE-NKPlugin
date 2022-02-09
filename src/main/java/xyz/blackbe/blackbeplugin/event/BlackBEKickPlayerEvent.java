@@ -1,20 +1,20 @@
-package xyz.blackbe.event;
+package xyz.blackbe.blackbeplugin.event;
 
 import cn.nukkit.Player;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.player.PlayerEvent;
 
-public class BlackBEKickEvent extends PlayerEvent implements Cancellable {
+public class BlackBEKickPlayerEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private final Reason kickReason;
     private boolean autoKick;
 
-    public BlackBEKickEvent(Player player, Reason kickReason) {
+    public BlackBEKickPlayerEvent(Player player, Reason kickReason) {
         this(player, kickReason, true);
     }
 
-    public BlackBEKickEvent(Player player, Reason kickReason, boolean autoKick) {
+    public BlackBEKickPlayerEvent(Player player, Reason kickReason, boolean autoKick) {
         this.player = player;
         this.kickReason = kickReason;
         this.autoKick = autoKick;

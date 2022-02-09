@@ -1,13 +1,12 @@
-package xyz.blackbe.runnable;
+package xyz.blackbe.blackbeplugin.task;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.TextFormat;
 import com.google.gson.Gson;
-import xyz.blackbe.BlackBEMain;
-import xyz.blackbe.data.BlackBEMotdBEData;
-import xyz.blackbe.data.BlackBEMotdJEData;
-import xyz.blackbe.util.BlackBEUtils;
+import xyz.blackbe.blackbeplugin.BlackBEMain;
+import xyz.blackbe.blackbeplugin.data.BlackBEMotdJEData;
+import xyz.blackbe.blackbeplugin.util.BlackBEUtils;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -17,8 +16,9 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-import static xyz.blackbe.constant.BlackBEApiConstants.BLACKBE_MOTD_API_HOST;
+import static xyz.blackbe.blackbeplugin.constant.BlackBEApiConstants.BLACKBE_MOTD_API_HOST;
 
+@SuppressWarnings("unused")
 public class QueryJEServerStatusTask extends AsyncTask {
     private static final Gson GSON = new Gson();
     private final String host;
@@ -81,5 +81,25 @@ public class QueryJEServerStatusTask extends AsyncTask {
                 httpsURLConnection.disconnect();
             }
         }
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public CommandSender getSender() {
+        return sender;
+    }
+
+    public BlackBEMotdJEData getData() {
+        return data;
+    }
+
+    public boolean isCheckSuccess() {
+        return checkSuccess;
     }
 }

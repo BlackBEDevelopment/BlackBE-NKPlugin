@@ -1,4 +1,4 @@
-package xyz.blackbe.command;
+package xyz.blackbe.blackbeplugin.command;
 
 import cn.nukkit.Server;
 import cn.nukkit.command.Command;
@@ -6,17 +6,19 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.utils.TextFormat;
-import xyz.blackbe.BlackBEMain;
-import xyz.blackbe.constant.BlackBEApiConstants;
-import xyz.blackbe.runnable.CheckBlacklistByNameTask;
-import xyz.blackbe.runnable.QueryBEServerStatusTask;
-import xyz.blackbe.runnable.QueryJEServerStatusTask;
-import xyz.blackbe.runnable.QueryXUIDTask;
+import xyz.blackbe.blackbeplugin.BlackBEMain;
+import xyz.blackbe.blackbeplugin.util.BlacklistCacheManager;
+import xyz.blackbe.blackbeplugin.constant.BlackBEApiConstants;
+import xyz.blackbe.blackbeplugin.task.CheckBlacklistByNameTask;
+import xyz.blackbe.blackbeplugin.task.QueryBEServerStatusTask;
+import xyz.blackbe.blackbeplugin.task.QueryJEServerStatusTask;
+import xyz.blackbe.blackbeplugin.task.QueryXUIDTask;
 
 public class BlackBECommand extends Command {
     public BlackBECommand() {
         super("blackbe", "BlackBE 云黑插件", "/blackbe help");
         this.setPermission("blackbe.command.default");
+        this.setPermissionMessage("你没有权限使用此命令,所需权限<permission>");
         this.commandParameters.clear();
         this.commandParameters.put("check", new CommandParameter[]{
                 CommandParameter.newEnum("check", new String[]{"check"}),
@@ -36,6 +38,9 @@ public class BlackBECommand extends Command {
                 CommandParameter.newEnum("motdpc", new String[]{"motdpc"}),
                 CommandParameter.newType("host", CommandParamType.STRING),
                 CommandParameter.newType("port", true, CommandParamType.INT)
+        });
+        this.commandParameters.put("cacheClean", new CommandParameter[]{
+                CommandParameter.newEnum("cacheClean", new String[]{"cacheClean"}),
         });
         this.commandParameters.put("help", new CommandParameter[]{
                 CommandParameter.newEnum("help", new String[]{"help"}),
@@ -89,6 +94,12 @@ public class BlackBECommand extends Command {
                         Server.getInstance().getScheduler().scheduleAsyncTask(BlackBEMain.getInstance(), task);
                         break;
                     }
+                    case "cacheclean":
+                    case "cacheClean": {
+                        BlacklistCacheManager.clear();
+                        sender.sendMessage("黑名单缓存清理完成!");
+                        break;
+                    }
                     case "help":
                     default: {
                         sendHelpInfo(sender);
@@ -105,5 +116,6 @@ public class BlackBECommand extends Command {
         sender.sendMessage(TextFormat.GREEN + "/blackbe xuid <gamertag> | 通过Xbox玩家代号查询XUID(可以使用&号代替空格)");
         sender.sendMessage(TextFormat.GREEN + "/blackbe motdpe <host> [port=19132] | 获取BE版服务器状态");
         sender.sendMessage(TextFormat.GREEN + "/blackbe motdpc <host> [port=19132] | 获取JE版服务器状态");
+        sender.sendMessage(TextFormat.GREEN + "/blackbe cacheClean | 清空黑名单缓存");
     }
 }

@@ -1,4 +1,4 @@
-package xyz.blackbe.util;
+package xyz.blackbe.blackbeplugin.util;
 
 import cn.nukkit.Player;
 import cn.nukkit.event.player.PlayerKickEvent;
@@ -8,6 +8,7 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.net.URL;
 
+@SuppressWarnings("unused")
 public class BlackBEUtils {
     public static void kickPlayer(Player player, String displayMessage) {
         kickPlayer(player, displayMessage, "被云黑插件踢出");

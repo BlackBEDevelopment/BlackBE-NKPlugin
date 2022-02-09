@@ -1,12 +1,12 @@
-package xyz.blackbe.runnable;
+package xyz.blackbe.blackbeplugin.task;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.TextFormat;
 import com.google.gson.Gson;
-import xyz.blackbe.BlackBEMain;
-import xyz.blackbe.data.BlackBECheckData;
-import xyz.blackbe.util.BlackBEUtils;
+import xyz.blackbe.blackbeplugin.BlackBEMain;
+import xyz.blackbe.blackbeplugin.data.BlackBEXUIDQueryData;
+import xyz.blackbe.blackbeplugin.util.BlackBEUtils;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -16,26 +16,18 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-import static xyz.blackbe.constant.BlackBEApiConstants.BLACKBE_API_HOST;
+import static xyz.blackbe.blackbeplugin.constant.BlackBEApiConstants.BLACKBE_UTIL_API_HOST;
 
-@SuppressWarnings({"DuplicatedCode", "unused"})
-public class CheckBlacklistByNameTask extends AsyncTask {
+@SuppressWarnings("unused")
+public class QueryXUIDTask extends AsyncTask {
     private static final Gson GSON = new Gson();
-    private final String playerName;
-    private final String xuid;
+    private final String gamertag;
     private final CommandSender sender;
-    private BlackBECheckData data;
+    private BlackBEXUIDQueryData data;
     private boolean checkSuccess = false;
 
-    public CheckBlacklistByNameTask(String playerName, String xuid, CommandSender sender) {
-        this.playerName = playerName;
-        this.xuid = xuid;
-        this.sender = sender;
-    }
-
-    public CheckBlacklistByNameTask(String playerName, CommandSender sender) {
-        this.playerName = playerName;
-        this.xuid = "";
+    public QueryXUIDTask(String gamertag, CommandSender sender) {
+        this.gamertag = gamertag;
         this.sender = sender;
     }
 
@@ -45,7 +37,7 @@ public class CheckBlacklistByNameTask extends AsyncTask {
         BufferedReader bufferedReader = null;
         HttpsURLConnection httpsURLConnection = null;
         try {
-            URL url = new URL(String.format(BLACKBE_API_HOST + "check?name=%s&xuid=%s", URLEncoder.encode(playerName, StandardCharsets.UTF_8.name()), xuid));
+            URL url = new URL(String.format(BLACKBE_UTIL_API_HOST + "xuid?gamertag=%s", URLEncoder.encode(gamertag, StandardCharsets.UTF_8.name())));
             httpsURLConnection = BlackBEUtils.initHttpsURLConnection(url, 5000, 5000);
             httpsURLConnection.connect();
 
@@ -58,7 +50,7 @@ public class CheckBlacklistByNameTask extends AsyncTask {
                     sb.append(inputLine);
                 }
 
-                this.data = GSON.fromJson(sb.toString(), BlackBECheckData.class);
+                this.data = GSON.fromJson(sb.toString(), BlackBEXUIDQueryData.class);
                 this.checkSuccess = true;
                 sender.sendMessage(TextFormat.GREEN + "查询结果为:\n" + data.toQueryResult());
             } else {
@@ -82,23 +74,15 @@ public class CheckBlacklistByNameTask extends AsyncTask {
         }
     }
 
-    public static Gson getGSON() {
-        return GSON;
-    }
-
-    public String getPlayerName() {
-        return playerName;
-    }
-
-    public String getXuid() {
-        return xuid;
+    public String getGamertag() {
+        return gamertag;
     }
 
     public CommandSender getSender() {
         return sender;
     }
 
-    public BlackBECheckData getData() {
+    public BlackBEXUIDQueryData getData() {
         return data;
     }
 

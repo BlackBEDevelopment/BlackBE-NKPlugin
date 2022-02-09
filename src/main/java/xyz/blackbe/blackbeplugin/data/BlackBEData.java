@@ -1,4 +1,4 @@
-package xyz.blackbe.data;
+package xyz.blackbe.blackbeplugin.data;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

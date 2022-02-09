@@ -1,9 +1,9 @@
-package xyz.blackbe;
+package xyz.blackbe.blackbeplugin;
 
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.TextFormat;
-import xyz.blackbe.command.BlackBECommand;
-import xyz.blackbe.constant.BlackBEApiConstants;
+import xyz.blackbe.blackbeplugin.command.BlackBECommand;
+import xyz.blackbe.blackbeplugin.constant.BlackBEApiConstants;
 
 
 /**

@@ -1,12 +1,12 @@
-package xyz.blackbe.runnable;
+package xyz.blackbe.blackbeplugin.task;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.TextFormat;
 import com.google.gson.Gson;
-import xyz.blackbe.BlackBEMain;
-import xyz.blackbe.data.BlackBEXUIDData;
-import xyz.blackbe.util.BlackBEUtils;
+import xyz.blackbe.blackbeplugin.BlackBEMain;
+import xyz.blackbe.blackbeplugin.data.BlackBEMotdBEData;
+import xyz.blackbe.blackbeplugin.util.BlackBEUtils;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -16,18 +16,24 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-import static xyz.blackbe.constant.BlackBEApiConstants.BLACKBE_UTIL_API_HOST;
+import static xyz.blackbe.blackbeplugin.constant.BlackBEApiConstants.BLACKBE_MOTD_API_HOST;
 
 @SuppressWarnings("unused")
-public class QueryXUIDTask extends AsyncTask {
+public class QueryBEServerStatusTask extends AsyncTask {
     private static final Gson GSON = new Gson();
-    private final String gamertag;
+    private final String host;
+    private final int port;
     private final CommandSender sender;
-    private BlackBEXUIDData data;
+    private BlackBEMotdBEData data;
     private boolean checkSuccess = false;
 
-    public QueryXUIDTask(String gamertag, CommandSender sender) {
-        this.gamertag = gamertag;
+    public QueryBEServerStatusTask(String host, CommandSender sender) {
+        this(host, 19132, sender);
+    }
+
+    public QueryBEServerStatusTask(String host, int port, CommandSender sender) {
+        this.host = host;
+        this.port = port;
         this.sender = sender;
     }
 
@@ -37,7 +43,10 @@ public class QueryXUIDTask extends AsyncTask {
         BufferedReader bufferedReader = null;
         HttpsURLConnection httpsURLConnection = null;
         try {
-            URL url = new URL(String.format(BLACKBE_UTIL_API_HOST + "xuid?gamertag=%s", URLEncoder.encode(gamertag, StandardCharsets.UTF_8.name())));
+            URL url = new URL(String.format(BLACKBE_MOTD_API_HOST + "?host=%s:%s",
+                    URLEncoder.encode(host, StandardCharsets.UTF_8.name()), // 中文域名表示很赞
+                    port
+            ));
             httpsURLConnection = BlackBEUtils.initHttpsURLConnection(url, 5000, 5000);
             httpsURLConnection.connect();
 
@@ -50,7 +59,7 @@ public class QueryXUIDTask extends AsyncTask {
                     sb.append(inputLine);
                 }
 
-                this.data = GSON.fromJson(sb.toString(), BlackBEXUIDData.class);
+                this.data = GSON.fromJson(sb.toString(), BlackBEMotdBEData.class);
                 this.checkSuccess = true;
                 sender.sendMessage(TextFormat.GREEN + "查询结果为:\n" + data.toQueryResult());
             } else {
@@ -74,15 +83,19 @@ public class QueryXUIDTask extends AsyncTask {
         }
     }
 
-    public String getGamertag() {
-        return gamertag;
+    public String getHost() {
+        return host;
+    }
+
+    public int getPort() {
+        return port;
     }
 
     public CommandSender getSender() {
         return sender;
     }
 
-    public BlackBEXUIDData getData() {
+    public BlackBEMotdBEData getData() {
         return data;
     }
 

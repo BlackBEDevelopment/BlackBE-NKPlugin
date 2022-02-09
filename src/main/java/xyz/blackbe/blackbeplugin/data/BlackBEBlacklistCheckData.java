@@ -1,11 +1,11 @@
-package xyz.blackbe.data;
+package xyz.blackbe.blackbeplugin.data;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 @SuppressWarnings({"unused", "MismatchedQueryAndUpdateOfCollection"})
-public class BlackBECheckData extends BlackBEData {
+public class BlackBEBlacklistCheckData extends BlackBEData {
     private boolean success;
     private Integer status;
     private String message;
