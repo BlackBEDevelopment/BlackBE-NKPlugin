@@ -1,13 +1,13 @@
 name: BlackBE
-main: xyz.blackbe.blackbeplugin.BlackBEMain
-version: "1.3.0"
-api: ["1.0.0"]
+main: icu.cattery.lixworth.blackbe.BlackBE
+version: "1.2-RM"
+api: ["1.0.5"]
 load: POSTWORLD
-authors: ["LixWorth", "darker"]
+author: LixWorth
 description: BlackBE NK Plugin blacbe.xyz
 website: https://github.com/lixworth/BlackBE-NKPlugin
 
-permissions:
-  blackbe.command.default:
-    description: BlackBE 云黑插件权限
-    default: op
+commands:
+  blackbe:
+    description: BlackBE 云黑插件
+    usage: "/blackbe"
