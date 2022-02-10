@@ -32,7 +32,7 @@ public class QueryXUIDTask implements BlackBETask {
 
     @Override
     public void invoke() {
-        sender.sendMessage("正在查询中,请稍后......");
+        this.sender.sendMessage("正在查询中,请稍后......");
         BufferedReader bufferedReader = null;
         HttpsURLConnection httpsURLConnection = null;
         try {
@@ -51,14 +51,14 @@ public class QueryXUIDTask implements BlackBETask {
 
                 this.data = GSON.fromJson(sb.toString(), BlackBEXUIDQueryData.class);
                 this.checkSuccess = true;
-                sender.sendMessage(TextFormat.GREEN + "查询结果为:\n" + data.toQueryResult());
+                this.sender.sendMessage(TextFormat.GREEN + "查询结果为:\n" + this.data.toQueryResult());
             } else {
                 BlackBEMain.getInstance().getLogger().error("在连接至云黑查询平台时出现问题,状态码=" + httpsURLConnection.getResponseCode() + ",请求URL=" + url.toExternalForm());
-                sender.sendMessage(TextFormat.RED + "查询失败!在连接至云黑查询平台时出现问题,状态码=" + httpsURLConnection.getResponseCode() + ",请求URL=" + url.toExternalForm());
+                this.sender.sendMessage(TextFormat.RED + "查询失败!在连接至云黑查询平台时出现问题,状态码=" + httpsURLConnection.getResponseCode() + ",请求URL=" + url.toExternalForm());
             }
         } catch (IOException e) {
             e.printStackTrace();
-            sender.sendMessage(TextFormat.RED + "查询失败!代码运行过程中发生异常.");
+            this.sender.sendMessage(TextFormat.RED + "查询失败!代码运行过程中发生异常.");
         } finally {
             try {
                 if (bufferedReader != null) {

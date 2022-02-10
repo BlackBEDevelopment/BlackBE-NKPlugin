@@ -71,6 +71,7 @@ public class BlackBECommand extends Command {
                         BlackBEMain.getAsyncTaskWorker().submitTask(task);
                         break;
                     }
+                    case "motdbe":
                     case "motdpe": {
                         String host = args[1];
                         QueryBEServerStatusTask task;
@@ -82,6 +83,7 @@ public class BlackBECommand extends Command {
                         BlackBEMain.getAsyncTaskWorker().submitTask(task);
                         break;
                     }
+                    case "motdje":
                     case "motdpc": {
                         String host = args[1];
                         QueryJEServerStatusTask task;

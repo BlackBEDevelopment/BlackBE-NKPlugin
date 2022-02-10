@@ -11,7 +11,7 @@ public class AsyncTaskWorker extends Thread {
     private final Queue<BlackBETask> workQueue = new LinkedBlockingQueue<>();
 
     public AsyncTaskWorker() {
-        this.setName("BlackBE-API-Connection");
+        this.setName("BlackBE-API-Connection-Thread");
     }
 
     @Override

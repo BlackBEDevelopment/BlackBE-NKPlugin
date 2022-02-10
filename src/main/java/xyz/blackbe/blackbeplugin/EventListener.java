@@ -27,9 +27,12 @@ public class EventListener implements Listener {
                 List<BlackBEBlacklistCheckData.Data.InfoBean> infoList = BlacklistCacheManager.getRecord(player).getCheckData().getInfo();
                 for (BlackBEBlacklistCheckData.Data.InfoBean infoBean : infoList) {
                     reasonStringBuilder.append("    违规等级:").append(infoBean.getLevel());
-                    reasonStringBuilder.append(",违规信息:").append(infoBean.getInfo());
                     reasonStringBuilder.append(",name:").append(infoBean.getName());
                     reasonStringBuilder.append(",black_id:").append(infoBean.getBlackId());
+                    reasonStringBuilder.append(",QQ:").append(infoBean.getQQ());
+                    reasonStringBuilder.append(",XUID:").append(infoBean.getXUID());
+                    reasonStringBuilder.append(",\n    UUID:").append(infoBean.getUUID());
+                    reasonStringBuilder.append(",\n    违规信息:").append(infoBean.getInfo());
                     reasonStringBuilder.append("\n");
                 }
                 BlackBEUtils.kickPlayer(player, reasonStringBuilder.toString(), "黑名单中玩家进服(读取缓存)");
