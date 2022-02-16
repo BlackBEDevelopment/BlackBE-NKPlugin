@@ -24,7 +24,7 @@ public class QueryTask extends AsyncTask {
     @Override
     public void onRun() {
         try {
-            URL url = new URL(BlackBE.api_domain + "/openapi/v3/check?name=" + URLEncoder.encode(player.getName()+"&xuid="+player.getLoginChainData().getXUID(),"UTF-8"));
+            URL url = new URL(BlackBE.api_domain + "/v3/check?name=" + URLEncoder.encode(player.getName()+"&xuid="+player.getLoginChainData().getXUID(),"UTF-8"));
 
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestMethod("GET");
