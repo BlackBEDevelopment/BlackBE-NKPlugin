@@ -3,6 +3,7 @@ package icu.cattery.lixworth.blackbe;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.AsyncTask;
 import com.google.gson.Gson;
+import icu.cattery.lixworth.blackbe.entity.Api;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -23,11 +24,11 @@ public class QueryTask extends AsyncTask {
     @Override
     public void onRun() {
         try {
-            URL url = new URL(BlackBE.api_domain + "/check?v2=true&id=" + URLEncoder.encode(player.getName(),"UTF-8"));
+            URL url = new URL(BlackBE.api_domain + "/openapi/v3/check?name=" + URLEncoder.encode(player.getName()+"&xuid="+player.getLoginChainData().getXUID(),"UTF-8"));
 
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestMethod("GET");
-            httpURLConnection.setRequestProperty("User-Agent", "RuMao/1.2");
+            httpURLConnection.setRequestProperty("User-Agent", "RuMao/1.3");
             httpURLConnection.setConnectTimeout(5000);
             httpURLConnection.setReadTimeout(5000);
             httpURLConnection.connect();
@@ -38,7 +39,7 @@ public class QueryTask extends AsyncTask {
             while ((inputLine = bufferedReader.readLine()) != null) {
                 Gson gson = new Gson();
                 Api api = gson.fromJson(inputLine, Api.class);
-                if (api.getErrorCode().equals("2002")) {
+                if (api.getExist()) {
                     this.blackBE.getServer().getScheduler().scheduleDelayedTask(this.blackBE, new KickRunnable(this.blackBE, player), 10);
                 } else {
                     this.blackBE.getLogger().info(player.getName() + "无云黑记录，正常进入");

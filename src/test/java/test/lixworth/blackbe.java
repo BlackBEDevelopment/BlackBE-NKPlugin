@@ -1,18 +1,14 @@
 package test.lixworth;
 
 import com.google.gson.Gson;
-import icu.cattery.lixworth.blackbe.Api;
+import icu.cattery.lixworth.blackbe.entity.Api;
 import icu.cattery.lixworth.blackbe.BlackBE;
-import icu.cattery.lixworth.blackbe.KickRunnable;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-
-import static jdk.nashorn.internal.runtime.PropertyDescriptor.GET;
 
 /**
  * Test Class
@@ -22,8 +18,8 @@ import static jdk.nashorn.internal.runtime.PropertyDescriptor.GET;
 public class blackbe {
     public static void main(String[] args) {
         try {
-            System.out.println("Test Url " + BlackBE.api_domain + "/check?v2=true&id=" + URLEncoder.encode("TEST", "UTF-8"));
-            URL url = new URL(BlackBE.api_domain + "/check?v2=true&id=" + URLEncoder.encode("TEST", "UTF-8"));
+            System.out.println(BlackBE.api_domain + "/v3/check?name=" + URLEncoder.encode("blackbetest","UTF-8"));
+            URL url = new URL(BlackBE.api_domain + "/v3/check?name=" + URLEncoder.encode("blackbetest","UTF-8"));
 
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestMethod("GET");
@@ -39,7 +35,7 @@ public class blackbe {
                 while ((inputLine = bufferedReader.readLine()) != null) {
                     Gson gson = new Gson();
                     Api api = gson.fromJson(inputLine, Api.class);
-                    System.out.println(api.getErrorCode());
+                    System.out.println(api.getExist());
                 }
                 bufferedReader.close();
                 httpURLConnection.disconnect();

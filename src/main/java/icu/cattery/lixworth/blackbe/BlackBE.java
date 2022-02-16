@@ -26,8 +26,8 @@ import java.net.URL;
  */
 public class BlackBE extends PluginBase implements Listener {
 
-    public static String api_version = "2.0[BETA]";
-    public static String api_domain = "https://api.blackbe.xyz/api";
+    public static String api_version = "3.1[NE]";
+    public static String api_domain = "https://api.blackbe.xyz/openapi";
 
     @Override
     public void onEnable() {
