@@ -1,6 +1,6 @@
 name: BlackBE
 main: icu.cattery.lixworth.blackbe.BlackBE
-version: "1.2-RM"
+version: "1.3-NE"
 api: ["1.0.5"]
 load: POSTWORLD
 author: LixWorth
